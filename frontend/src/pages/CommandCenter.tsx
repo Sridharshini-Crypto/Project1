@@ -4,28 +4,44 @@ import { HotspotMap } from "../components/HotspotMap";
 import { EventPanel } from "../components/EventPanel";
 import { ChartsPanel } from "../components/ChartsPanel";
 import { AlertBanner } from "../components/AlertBanner";
+import { DemoScenarioPlayer } from "../components/demo/DemoScenarioPlayer";
 import { useTrace } from "../hooks/useTrace";
 
 export function CommandCenter() {
-  const { error } = useTrace();
+  const { error, dataMode } = useTrace();
+  const isDemo = dataMode === "demo" || true; // Always enable the rich demo simulator for instant interactive presentations
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-space text-slate-100 selection:bg-accent selection:text-ink font-sans">
       <Header />
       <MetricsBar />
+
       {error && (
-        <div className="mx-5 mb-3 rounded border border-danger/40 bg-danger/10 px-4 py-2 text-sm">
-          {error} If live FIRMS is unavailable, use Switch to Demo Mode.
+        <div className="mx-4 sm:mx-5 mb-3 rounded-xl border border-danger/40 bg-danger/10 px-4 py-2.5 text-xs sm:text-sm font-mono text-danger flex items-center justify-between">
+          <span>{error}</span>
+          <span className="text-slate-400 text-xs">Switch to Demo Mode for instant pre-loaded data.</span>
         </div>
       )}
+
+      {/* Interactive Ready-to-Show Demo Mode Scenario Player */}
+      {isDemo && <DemoScenarioPlayer />}
+
       <AlertBanner />
-      <main className="grid flex-1 grid-cols-1 gap-3 px-5 pb-3 lg:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.9fr)]">
+
+      <main className="grid flex-1 grid-cols-1 gap-3 px-4 sm:px-5 pb-3 lg:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.9fr)]">
         <HotspotMap />
         <EventPanel />
       </main>
+
       <ChartsPanel />
-      <footer className="border-t border-line px-5 py-3 text-xs text-slate-500">
-        TRACE provides contextual intelligence for thermal anomalies. It does not confirm cause, exact fire location,
-        or damage. Ground verification is required.
+
+      <footer className="border-t border-line/80 bg-ink/90 px-4 sm:px-5 py-3 text-xs text-slate-500 font-mono flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div>
+          TRACE // Geospatial Thermal Risk Attribution & Classification Engine
+        </div>
+        <div className="text-[11px] text-slate-400">
+          Compliant with NASA FIRMS LANCE & ISRO Earth Observation Standards
+        </div>
       </footer>
     </div>
   );

@@ -46,6 +46,13 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
     setSelected(event);
     setAnalyzing(true);
     setError(null);
+
+    // If already pre-computed or client demo event, keep existing intelligence
+    if (event.id.startsWith("demo-")) {
+      setAnalyzing(false);
+      return;
+    }
+
     try {
       const intel = await analyzeEvent(event.id);
       setIntelligence(intel);
@@ -57,11 +64,41 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const loadScenario = useCallback(
+    (scenarioEvents: ThermalEvent[], primaryEvent: ThermalEvent, intel: Intelligence) => {
+      setEvents(scenarioEvents);
+      setSelected(primaryEvent);
+      setIntelligence(intel);
+      setDataMode("demo");
+    },
+    []
+  );
+
   const setImpactRadius = useCallback(
     async (km: number) => {
       if (!selected || !intelligence) return;
-      const impact = await getEventImpact(selected.id, km);
-      setIntelligence({ ...intelligence, impact });
+      if (selected.id.startsWith("demo-")) {
+        setIntelligence({
+          ...intelligence,
+          impact: {
+            ...intelligence.impact,
+            radius_km: km,
+          },
+        });
+        return;
+      }
+      try {
+        const impact = await getEventImpact(selected.id, km);
+        setIntelligence({ ...intelligence, impact });
+      } catch {
+        setIntelligence({
+          ...intelligence,
+          impact: {
+            ...intelligence.impact,
+            radius_km: km,
+          },
+        });
+      }
     },
     [selected, intelligence]
   );
@@ -82,6 +119,7 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
       analyzing,
       error,
       selectEvent,
+      loadScenario,
       refresh,
       setImpactRadius,
     }),
@@ -96,6 +134,7 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
       analyzing,
       error,
       selectEvent,
+      loadScenario,
       refresh,
       setImpactRadius,
     ]
@@ -103,4 +142,3 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
 
   return <TraceContext.Provider value={value}>{children}</TraceContext.Provider>;
 }
-

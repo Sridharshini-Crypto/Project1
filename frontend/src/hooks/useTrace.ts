@@ -12,6 +12,7 @@ export type TraceState = {
   analyzing: boolean;
   error: string | null;
   selectEvent: (event: ThermalEvent) => void;
+  loadScenario: (events: ThermalEvent[], primaryEvent: ThermalEvent, intel: Intelligence) => void;
   refresh: (mode?: "demo" | "live") => Promise<void>;
   setImpactRadius: (km: number) => Promise<void>;
 };
