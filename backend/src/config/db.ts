@@ -50,10 +50,15 @@ function supabaseRef(host: string): string | null {
 
 async function ipv4Host(hostname: string): Promise<string | null> {
   try {
-    const records = await dnsPromises.resolve4(hostname);
-    return records[0] ?? null;
+    const res = await dnsPromises.lookup(hostname, { family: 4 });
+    return res.address ?? null;
   } catch {
-    return null;
+    try {
+      const records = await dnsPromises.resolve4(hostname);
+      return records[0] ?? null;
+    } catch {
+      return null;
+    }
   }
 }
 
