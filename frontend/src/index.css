@@ -5,10 +5,12 @@
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
-  background: #07111d;
+  background: #040913;
   color: #e6f1f4;
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
 }
 
 .leaflet-container {
@@ -17,9 +19,80 @@ body,
 }
 
 .trace-scroll::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
+}
+.trace-scroll::-webkit-scrollbar-track {
+  background: rgba(13, 27, 42, 0.6);
 }
 .trace-scroll::-webkit-scrollbar-thumb {
   background: #1b3a4b;
-  border-radius: 8px;
+  border-radius: 4px;
 }
+.trace-scroll::-webkit-scrollbar-thumb:hover {
+  background: #3ee0c6;
+}
+
+/* Futuristic Scanline Effect */
+.bg-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+/* Subtle Sci-Fi Grid */
+.bg-tech-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(27, 58, 75, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27, 58, 75, 0.25) 1px, transparent 1px);
+}
+
+/* Radar Pulse Wave */
+@keyframes radarPing {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.radar-ping {
+  animation: radarPing 3s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+  background: rgba(13, 27, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(27, 58, 75, 0.8);
+}
+
+.glass-panel-glow {
+  background: rgba(13, 27, 42, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(62, 224, 198, 0.35);
+  box-shadow: 0 0 25px rgba(62, 224, 198, 0.12);
+}
+
+/* 3D Holographic Perspective */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
