@@ -15,12 +15,14 @@ import {
   Radio,
 } from "lucide-react";
 import { useSession } from "../context/SessionContext";
+import { useTrace } from "../hooks/useTrace";
 import { SpaceBackground } from "../components/landing/SpaceBackground";
 import { LandingTelemetry } from "../components/landing/LandingTelemetry";
 
 export function AuthPage() {
   const navigate = useNavigate();
   const { login } = useSession();
+  const { setDataMode, refresh } = useTrace();
   const [tab, setTab] = useState<"login" | "register">("login");
 
   // Login form state

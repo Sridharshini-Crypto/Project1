@@ -8,7 +8,7 @@ import { DemoScenarioPlayer } from "../components/demo/DemoScenarioPlayer";
 import { useTrace } from "../hooks/useTrace";
 
 export function CommandCenter() {
-  const { error, dataMode, refresh, loading } = useTrace();
+  const { error, dataMode } = useTrace();
   const isDemo = dataMode === "demo";
 
   return (
