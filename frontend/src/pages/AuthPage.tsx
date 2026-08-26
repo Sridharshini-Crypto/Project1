@@ -11,6 +11,8 @@ import {
   KeyRound,
   Fingerprint,
   ChevronLeft,
+  Shield,
+  Radio,
 } from "lucide-react";
 import { useSession } from "../context/SessionContext";
 import { SpaceBackground } from "../components/landing/SpaceBackground";
@@ -22,7 +24,7 @@ export function AuthPage() {
   const [tab, setTab] = useState<"login" | "register">("login");
 
   // Login form state
-  const [loginEmail, setLoginEmail] = useState("director@trace.isro-nasa.gov");
+  const [loginEmail, setLoginEmail] = useState("commander@trace.isro-nasa.gov");
   const [loginPassword, setLoginPassword] = useState("••••••••••••");
 
   // Register form state
@@ -38,7 +40,7 @@ export function AuthPage() {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginEmail) {
-      setError("Please provide a valid operator email.");
+      setError("Please enter a valid operator email.");
       return;
     }
     setLoading(true);
@@ -46,14 +48,14 @@ export function AuthPage() {
 
     setTimeout(() => {
       login({
-        fullName: loginEmail.split("@")[0].toUpperCase() || "MISSION OPERATOR",
+        fullName: loginEmail.split("@")[0].toUpperCase() || "COMMAND OPERATOR",
         email: loginEmail,
         organization: "Earth Observation Command Network",
         role: "Incident Commander",
       });
       setLoading(false);
       navigate("/region");
-    }, 600);
+    }, 500);
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
@@ -74,7 +76,7 @@ export function AuthPage() {
       });
       setLoading(false);
       navigate("/region");
-    }, 600);
+    }, 500);
   };
 
   const handleQuickDemoAccess = () => {
@@ -96,40 +98,36 @@ export function AuthPage() {
       <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 py-4 flex items-center justify-between">
         <button
           onClick={() => navigate("/")}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-panel/80 border border-line hover:border-accent/50 text-xs font-mono text-slate-300 hover:text-white transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-panel/80 border border-line hover:border-accent text-xs font-mono text-slate-300 hover:text-white transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4 text-accent" />
-          <span>RETURN TO MISSION BRIEFING</span>
+          <span>RETURN TO OBSERVATORY</span>
         </button>
 
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-          <span className="text-xs font-mono text-accent">SECURITY LEVEL 4: CLEARED</span>
+        <div className="flex items-center gap-3 text-xs font-mono text-accent">
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            SECURE ACCESS TERMINAL
+          </span>
         </div>
       </div>
 
       {/* Main Terminal Box */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-8">
+      <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-6">
         <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: 10 }}
+          initial={{ opacity: 0, scale: 0.96, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.35 }}
           className="w-full max-w-md rounded-3xl bg-panel/90 border border-line-bright p-6 sm:p-8 backdrop-blur-2xl shadow-2xl relative"
         >
-          {/* Tech Corner Crosshairs */}
-          <div className="absolute -top-1 -left-1 w-3.5 h-3.5 border-t-2 border-l-2 border-accent" />
-          <div className="absolute -top-1 -right-1 w-3.5 h-3.5 border-t-2 border-r-2 border-accent" />
-          <div className="absolute -bottom-1 -left-1 w-3.5 h-3.5 border-b-2 border-l-2 border-accent" />
-          <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 border-b-2 border-r-2 border-accent" />
-
           {/* Logo & Heading */}
           <div className="text-center mb-6">
             <div className="w-14 h-14 mx-auto rounded-2xl bg-panel border border-accent/40 p-2 mb-3 shadow-[0_0_20px_rgba(62,224,198,0.25)] flex items-center justify-center">
               <img src="/trace-logo.png" alt="TRACE Shield" className="w-full h-full object-contain" />
             </div>
-            <h2 className="text-xl font-bold text-white tracking-wide">TRACE ACCESS GATEWAY</h2>
-            <p className="text-xs font-mono text-slate-400 mt-1">
-              AUTHENTICATION GATEWAY // OPERATOR TERMINAL
+            <h2 className="text-xl font-bold text-white tracking-wide">TRACE</h2>
+            <p className="text-xs font-mono text-slate-400 mt-0.5">
+              SECURE ACCESS TERMINAL
             </p>
           </div>
 
@@ -181,8 +179,8 @@ export function AuthPage() {
                 className="space-y-4 text-left"
               >
                 <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1.5">
-                    OPERATOR EMAIL / CREDENTIAL ID
+                  <label className="block text-xs font-mono text-slate-300 mb-1.5 uppercase">
+                    IDENTITY [ Email Address ]
                   </label>
                   <div className="relative">
                     <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -198,8 +196,8 @@ export function AuthPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1.5">
-                    SECURITY ACCESS TOKEN
+                  <label className="block text-xs font-mono text-slate-300 mb-1.5 uppercase">
+                    ACCESS KEY [ Security Token ]
                   </label>
                   <div className="relative">
                     <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -223,8 +221,7 @@ export function AuthPage() {
                     <span>AUTHENTICATING TELEMETRY...</span>
                   ) : (
                     <>
-                      <span>AUTHENTICATE & ENTER</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>AUTHENTICATE →</span>
                     </>
                   )}
                 </button>
@@ -269,9 +266,7 @@ export function AuthPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1">
-                    ORGANIZATION / INSTITUTION
-                  </label>
+                  <label className="block text-xs font-mono text-slate-300 mb-1">ORGANIZATION</label>
                   <div className="relative">
                     <Building className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
@@ -346,14 +341,25 @@ export function AuthPage() {
               <span>INSTANT JUDGE / DEMO ACCESS (1-CLICK)</span>
             </button>
           </div>
+
+          {/* Trust Footnote */}
+          <div className="mt-4 pt-3 border-t border-line/60 flex items-center justify-between text-[10px] font-mono text-slate-400">
+            <span className="flex items-center gap-1 text-accent">
+              <Shield className="w-3 h-3" />
+              SECURE CONNECTION
+            </span>
+            <span className="flex items-center gap-1 text-cyan-400">
+              <Radio className="w-3 h-3" />
+              GEOSPATIAL NETWORK ACTIVE
+            </span>
+          </div>
         </motion.div>
       </div>
 
       {/* Footer */}
       <div className="relative z-10 text-center py-4 text-[10px] font-mono text-slate-500">
-        TRACE ENCRYPTION PROTOCOL // SESSION STORED CLIENT-SIDE FOR HACKATHON EVALUATION
+        TRACE GEOSPATIAL OBSERVATORY // ACCESS PORTAL
       </div>
     </div>
   );
 }
-
