@@ -2,16 +2,16 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RotateCcw, Compass } from "lucide-react";
 
-// Precise 3D Shield Outline matching the exact emblem proportions
+// Precise 3D Shield Outline matching the exact HD reference image proportions (955 x 791)
 function createShieldShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  shape.moveTo(0, 1.25);
-  shape.lineTo(0.95, 1.05);
-  shape.quadraticCurveTo(1.08, 0.22, 0.88, -0.42);
-  shape.quadraticCurveTo(0.65, -1.05, 0, -1.45);
-  shape.quadraticCurveTo(-0.65, -1.05, -0.88, -0.42);
-  shape.quadraticCurveTo(-1.08, 0.22, -0.95, 1.05);
-  shape.lineTo(0, 1.25);
+  shape.moveTo(0, 1.35);
+  shape.lineTo(1.08, 1.12);
+  shape.quadraticCurveTo(1.22, 0.25, 0.98, -0.45);
+  shape.quadraticCurveTo(0.72, -1.15, 0, -1.55);
+  shape.quadraticCurveTo(-0.72, -1.15, -0.98, -0.45);
+  shape.quadraticCurveTo(-1.22, 0.25, -1.08, 1.12);
+  shape.lineTo(0, 1.35);
   return shape;
 }
 
@@ -27,12 +27,12 @@ export function TraceLogo3D() {
     const mount = mountRef.current;
     if (!mount) return;
 
-    const width = mount.clientWidth || 480;
-    const height = mount.clientHeight || 480;
+    const width = mount.clientWidth || 500;
+    const height = mount.clientHeight || 500;
 
     // --- 1. Three.js Scene, Camera, Renderer ---
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
     camera.position.set(0, 0, 4.6);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -41,16 +41,16 @@ export function TraceLogo3D() {
     renderer.toneMapping = THREE.NoToneMapping;
     mount.appendChild(renderer.domElement);
 
-    // --- 2. Balanced Studio Lighting (No over-exposure) ---
+    // --- 2. Balanced Studio Lighting ---
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
     scene.add(ambientLight);
 
     const sideLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    sideLight.position.set(-2.5, 3.0, 3.0);
+    sideLight.position.set(-3.0, 3.5, 3.5);
     scene.add(sideLight);
 
-    const rimLight = new THREE.DirectionalLight(0x22d3ee, 0.8);
-    rimLight.position.set(3.0, 1.0, -2.0);
+    const rimLight = new THREE.DirectionalLight(0x3ee0c6, 0.8);
+    rimLight.position.set(3.5, 1.0, -2.0);
     scene.add(rimLight);
 
     // --- 3. Master 3D Model Group ---
@@ -58,43 +58,43 @@ export function TraceLogo3D() {
     scene.add(modelGroup);
 
     // ----------------------------------------------------
-    // A. SOLID 3D EXTRUDED SHIELD BODY (Sides & Bevels)
+    // A. 3D EXTRUDED SHIELD CASING (Physical Depth & Bevels)
     // ----------------------------------------------------
     const shieldShape = createShieldShape();
     const extrudeSettings: THREE.ExtrudeGeometryOptions = {
-      depth: 0.16,
+      depth: 0.14,
       bevelEnabled: true,
       bevelSegments: 4,
       steps: 1,
-      bevelSize: 0.035,
-      bevelThickness: 0.035,
+      bevelSize: 0.03,
+      bevelThickness: 0.03,
     };
 
     const shieldGeometry = new THREE.ExtrudeGeometry(shieldShape, extrudeSettings);
     shieldGeometry.center();
 
-    // Dark Navy Matte/Satin Material for 3D depth without glare
+    // Dark Brushed Titanium Material for the 3D Extruded Sides
     const shieldMaterial = new THREE.MeshStandardMaterial({
-      color: 0x141f2d,
-      metalness: 0.5,
-      roughness: 0.5,
+      color: 0x182433,
+      metalness: 0.75,
+      roughness: 0.35,
     });
     const shieldMesh = new THREE.Mesh(shieldGeometry, shieldMaterial);
     modelGroup.add(shieldMesh);
 
     // ----------------------------------------------------
-    // B. EXACT 3D EMBLEM (True Colors, Zero White Glare)
+    // B. EXACT ULTRA-HD 3D EMBLEM (Front & Back Faces)
     // ----------------------------------------------------
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load("/trace-3d-model-clean.png", (texture) => {
+    textureLoader.load("/trace-shield-isolated.png", (texture) => {
       texture.generateMipmaps = true;
       texture.minFilter = THREE.LinearMipmapLinearFilter;
 
-      const planeWidth = 2.15;
-      const planeHeight = 2.15 * (372 / 402);
+      // Exact aspect ratio of trace-shield-isolated: 955w x 791h
+      const planeWidth = 2.45;
+      const planeHeight = 2.45 * (791 / 955);
 
       const planeGeom = new THREE.PlaneGeometry(planeWidth, planeHeight);
-      // MeshBasicMaterial guarantees exact color fidelity with ZERO specular glare/white glow
       const planeMat = new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,
@@ -103,13 +103,13 @@ export function TraceLogo3D() {
 
       // Front Face
       const frontEmblem = new THREE.Mesh(planeGeom, planeMat);
-      frontEmblem.position.set(0, 0, 0.118);
+      frontEmblem.position.set(0, 0, 0.102);
       modelGroup.add(frontEmblem);
 
-      // Back Face (For 360° Rotation)
+      // Back Face (For full 360° rotation)
       const backEmblem = new THREE.Mesh(planeGeom, planeMat);
       backEmblem.rotation.y = Math.PI;
-      backEmblem.position.set(0, 0, -0.118);
+      backEmblem.position.set(0, 0, -0.102);
       modelGroup.add(backEmblem);
     });
 
@@ -119,7 +119,7 @@ export function TraceLogo3D() {
       modelGroup,
     };
 
-    // --- 4. Interactive Mouse Drag Controls ---
+    // --- 4. Interactive Mouse Drag Controls with Inertia ---
     let isDragging = false;
     let prevMousePos = { x: 0, y: 0 };
 
@@ -213,17 +213,17 @@ export function TraceLogo3D() {
 
   return (
     <div className="relative flex flex-col items-center justify-center w-full max-w-2xl mx-auto select-none">
-      {/* 3D WebGL Viewport */}
+      {/* Clean 3D WebGL Canvas Viewport */}
       <div className="relative w-full h-[380px] sm:h-[440px] flex items-center justify-center cursor-grab active:cursor-grabbing">
         <div ref={mountRef} className="w-full h-full" />
 
-        {/* Minimal Badge */}
+        {/* Minimal Floating Telemetry Badge */}
         <div className="absolute top-2 left-3 px-2.5 py-1 rounded-lg bg-panel/85 border border-line-bright text-[10px] font-mono text-slate-300 backdrop-blur-md pointer-events-none shadow-sm flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
-          <span>TRACE 3D VOLUMETRIC SHIELD</span>
+          <span>TRACE 3D VOLUMETRIC SHIELD // TITANIUM BEZEL</span>
         </div>
 
-        {/* Reset Button */}
+        {/* Reset Orientation Button */}
         <button
           onClick={handleReset}
           className="absolute top-2 right-3 p-1.5 rounded-lg bg-panel/85 border border-line hover:border-accent text-slate-400 hover:text-accent transition-colors cursor-pointer backdrop-blur-md shadow-sm"
@@ -232,7 +232,7 @@ export function TraceLogo3D() {
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
 
-        {/* Bottom Drag Hint */}
+        {/* Bottom Interactive Hint */}
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-ink/75 border border-line text-[10px] font-mono text-slate-400 backdrop-blur-md pointer-events-none">
           <Compass className="w-3 h-3 text-accent" />
           <span>DRAG TO ROTATE 3D MODEL (360° DEPTH)</span>
