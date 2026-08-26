@@ -2,15 +2,24 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Satellite,
-  Crosshair,
-  Building2,
-  Shield,
+  Flame,
+  Layers,
+  Cpu,
+  ShieldCheck,
+  Radio,
   ArrowRight,
-  Activity,
+  Sparkles,
+  Compass,
+  ChevronRight,
+  TrendingUp,
+  Clock,
+  Eye,
   Database,
+  Globe,
 } from "lucide-react";
-import { RealisticEarth } from "../components/landing/RealisticEarth";
+import { SpaceBackground } from "../components/landing/SpaceBackground";
 import { TraceLogo3D } from "../components/landing/TraceLogo3D";
+import { LandingTelemetry } from "../components/landing/LandingTelemetry";
 import { EarthObservatory } from "../components/landing/EarthObservatory";
 
 export function LandingPage() {
@@ -21,297 +30,321 @@ export function LandingPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#02050b] text-slate-100 overflow-x-hidden selection:bg-accent selection:text-ink font-sans">
-      {/* Background Subtle Tech Grid & Ambient Space Atmosphere */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-tech-grid opacity-15" />
-        <div className="absolute inset-0 bg-scanlines opacity-5" />
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
-      </div>
+    <div className="relative min-h-screen bg-space text-slate-100 overflow-x-hidden selection:bg-accent selection:text-ink font-sans">
+      {/* Background Starfield & Space Atmosphere */}
+      <SpaceBackground />
 
-      {/* Header — Matching Reference Image */}
-      <header className="relative z-40 border-b border-line/40 bg-space/40 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo with Pulse Wave Icon */}
-          <div
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-2.5 cursor-pointer group"
-          >
-            <div className="flex items-center text-cyan-400">
-              <Activity className="w-5 h-5 text-cyan-400 stroke-[2.5]" />
+      {/* Top Orbital Telemetry Bar */}
+      <LandingTelemetry />
+
+      {/* SECTION 1: Minimalist Scientific Header */}
+      <header className="sticky top-0 z-40 border-b border-line/80 bg-panel/85 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-panel border border-accent/40 p-1 flex items-center justify-center shadow-[0_0_12px_rgba(62,224,198,0.2)]">
+              <img src="/trace-logo.png" alt="TRACE Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="font-mono font-bold text-lg tracking-[0.2em] text-white group-hover:text-cyan-400 transition-colors">
-              TRACE
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-mono font-bold text-base tracking-wider text-white">TRACE</span>
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono bg-accent/15 border border-accent/30 text-accent font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                SYSTEM ONLINE
+              </span>
+            </div>
           </div>
 
-          {/* Navigation Links & Vertical Divider Lines */}
-          <nav className="flex items-center text-xs font-mono tracking-wider text-slate-300">
-            <a
-              href="#about"
-              className="px-5 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
-            >
-              ABOUT
-            </a>
-            <a
-              href="#features"
-              className="px-5 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
-            >
-              FEATURES
-            </a>
-            <a
-              href="#technology"
-              className="px-5 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
-            >
-              TECHNOLOGY
-            </a>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <nav className="hidden md:flex items-center gap-5 text-xs font-mono text-slate-300">
+              <a href="#observatory" className="hover:text-accent transition-colors">
+                EARTHWATCH
+              </a>
+              <a href="#pipeline" className="hover:text-accent transition-colors">
+                ARCHITECTURE
+              </a>
+              <a href="#datasources" className="hover:text-accent transition-colors">
+                DATA FEEDS
+              </a>
+            </nav>
+
             <button
               onClick={handleEnterPlatform}
-              className="pl-5 py-1 text-cyan-400 font-bold hover:text-white transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-ink font-mono text-xs font-bold hover:bg-accent/90 shadow-[0_0_18px_rgba(62,224,198,0.35)] transition-all transform active:scale-95 cursor-pointer"
             >
-              CONTACT
+              <span>ENTER PLATFORM</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
-          </nav>
+          </div>
         </div>
       </header>
 
-      {/* HERO SECTION — Matching media_1787754294571.png */}
-      <section className="relative z-10 min-h-[calc(100vh-110px)] max-w-7xl mx-auto px-6 py-6 flex flex-col justify-between">
-        <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1 my-auto">
-          {/* Left Column: Exact Photorealistic 3D Earth at Night with Orbiting Satellites (6 Cols) */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
-            className="lg:col-span-6 flex items-center justify-center relative"
-          >
-            <RealisticEarth />
-          </motion.div>
+      {/* SECTION 2: Hero with True 3D Volumetric TRACE Logo */}
+      <section className="relative z-10 pt-8 sm:pt-12 pb-14 px-4 sm:px-6 max-w-7xl mx-auto flex flex-col items-center text-center">
+        {/* Mission Status Pill */}
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-panel/90 border border-accent/40 text-accent text-xs font-mono mb-4 shadow-sm"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>GEOSPATIAL THERMAL INTELLIGENCE OBSERVATORY</span>
+        </motion.div>
 
-          {/* Vertical Divider Line with Tech Markers (Matching Reference Image) */}
-          <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-line/50 pointer-events-none">
-            {/* Top Square Box Marker */}
-            <div className="absolute top-[22%] -left-[3px] w-[7px] h-[7px] bg-slate-300 border border-slate-400" />
-            {/* Middle Cyan Blip Marker */}
-            <div className="absolute top-[52%] -left-[3px] w-[7px] h-[7px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-            {/* Bottom White Blip Marker */}
-            <div className="absolute top-[68%] -left-[3px] w-[7px] h-[7px] bg-white" />
-          </div>
-
-          {/* Right Column: Hero Typography & 4 Core Pillars (6 Cols) */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-            className="lg:col-span-6 text-left space-y-6 lg:pl-10"
-          >
-            {/* Title TRΛCE in Giant Bold Modern Typography */}
-            <div>
-              <div className="flex items-baseline">
-                <h1 className="text-5xl sm:text-7xl font-extrabold tracking-[0.18em] text-white font-sans">
-                  TR<span className="text-cyan-400">Λ</span>CE
-                </h1>
-              </div>
-
-              {/* Subtitle with RISK highlighted in cyan */}
-              <div className="mt-2 text-xs sm:text-sm font-mono tracking-[0.25em] text-slate-300 uppercase">
-                THERMAL <span className="text-cyan-400 font-bold">RISK</span> ATTRIBUTION & CLASSIFICATION ENGINE
-              </div>
-
-              {/* Tagline with corner bracket ˥ */}
-              <p className="mt-3 text-sm sm:text-base text-slate-300 font-light flex items-center gap-1.5">
-                <span>From thermal detection to</span>
-                <span className="text-cyan-400 font-mono font-semibold">˥</span>
-                <span>actionable intelligence.</span>
-              </p>
-            </div>
-
-            {/* 4 Core Pillars Stack (DETECT, ANALYZE, ATTRIBUTE, EXPOSE) */}
-            <div className="space-y-4 pt-2">
-              {/* Pillar 1: DETECT */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-lg bg-panel border border-cyan-500/30 flex items-center justify-center text-cyan-400 flex-shrink-0 group-hover:border-cyan-400 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.3)] transition-all">
-                  <Satellite className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs font-mono font-bold tracking-wider text-white">DETECT</div>
-                  <div className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                    Real-time thermal anomaly detection using <span className="text-cyan-400 font-medium">NASA FIRMS</span> data.
-                  </div>
-                </div>
-              </div>
-
-              {/* Pillar 2: ANALYZE */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-lg bg-panel border border-cyan-500/30 flex items-center justify-center text-cyan-400 flex-shrink-0 group-hover:border-cyan-400 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.3)] transition-all">
-                  <Crosshair className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs font-mono font-bold tracking-wider text-white">ANALYZE</div>
-                  <div className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                    <span className="text-cyan-400 font-medium">AI-powered</span> analysis for persistence, abnormality and risk scoring.
-                  </div>
-                </div>
-              </div>
-
-              {/* Pillar 3: ATTRIBUTE */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-lg bg-panel border border-cyan-500/30 flex items-center justify-center text-cyan-400 flex-shrink-0 group-hover:border-cyan-400 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.3)] transition-all">
-                  <Building2 className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs font-mono font-bold tracking-wider text-white">ATTRIBUTE</div>
-                  <div className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                    Probable source <span className="text-cyan-400 font-medium">attribution</span> with confidence scoring.
-                  </div>
-                </div>
-              </div>
-
-              {/* Pillar 4: EXPOSE */}
-              <div className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-lg bg-panel border border-cyan-500/30 flex items-center justify-center text-cyan-400 flex-shrink-0 group-hover:border-cyan-400 group-hover:shadow-[0_0_12px_rgba(34,211,238,0.3)] transition-all">
-                  <Shield className="w-5 h-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-xs font-mono font-bold tracking-wider text-white">EXPOSE</div>
-                  <div className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                    Identify nearby assets and potential <span className="text-cyan-400 font-medium">exposure</span> for informed decisions.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* High-Tech Cyan Corner-Bracketed Button: [ EXPLORE TRACE → ] */}
-            <div className="pt-3">
-              <button
-                onClick={handleEnterPlatform}
-                className="relative group px-8 py-3.5 bg-ink/70 hover:bg-panel border border-cyan-500/40 text-xs font-mono tracking-[0.2em] font-bold text-white uppercase transition-all duration-300 hover:border-cyan-400 hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] cursor-pointer"
-              >
-                {/* Tech Corner Brackets */}
-                <div className="absolute -top-1 -left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-400" />
-                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 border-t-2 border-r-2 border-cyan-400" />
-                <div className="absolute -bottom-1 -left-1 w-2.5 h-2.5 border-b-2 border-l-2 border-cyan-400" />
-                <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-400" />
-
-                <div className="flex items-center gap-3">
-                  <span>EXPLORE TRACE</span>
-                  <ArrowRight className="w-4 h-4 text-cyan-400 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </button>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Hero Bottom Telemetry Strip — Matching Reference Image */}
-        <div className="w-full pt-6 pb-2 border-t border-line/40 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-400">
-          <div className="flex items-center gap-2">
-            <span className="text-slate-300">TRACE™</span>
-            <span>|</span>
-            <span>THERMAL INTELLIGENCE FOR A SAFER TOMORROW.</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-slate-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-cyan-400">13.0827° N, 80.2707° E</span>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION: 3D VOLUMETRIC TRACE SHIELD CORE OBJECT */}
-      <section id="technology" className="relative z-10 py-16 px-6 max-w-7xl mx-auto border-t border-line/60 text-center">
-        <div className="max-w-3xl mx-auto mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono mb-2">
-            <Shield className="w-3.5 h-3.5" />
-            <span>TRACE PHYSICAL 3D EMBLEM</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">Volumetric Intelligence Core</h2>
-          <p className="text-slate-400 text-xs sm:text-sm mt-1">
-            Drag with your mouse to rotate the genuine 3D extruded shield badge in 360° space.
+        {/* Hero Title & Subtitle */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="max-w-3xl"
+        >
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-2">
+            TRACE
+          </h1>
+          <p className="text-sm sm:text-base font-mono text-accent uppercase tracking-widest mb-3">
+            Thermal Risk Attribution & Classification Engine
           </p>
-        </div>
+          <p className="text-base sm:text-xl text-slate-300 font-light max-w-2xl mx-auto leading-relaxed">
+            Tracing thermal anomalies from <span className="text-white font-medium">detection</span> to{" "}
+            <span className="text-accent font-medium">decision</span>.
+          </p>
+        </motion.div>
 
-        <TraceLogo3D />
+        {/* 3D Volumetric Permanent TRACE Logo Object */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="w-full mt-2"
+        >
+          <TraceLogo3D />
+        </motion.div>
+
+        {/* Primary Action Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="flex flex-col sm:flex-row items-center gap-3.5 mt-4"
+        >
+          <a
+            href="#observatory"
+            className="w-full sm:w-auto px-7 py-3 rounded-xl bg-accent text-ink font-mono text-xs sm:text-sm font-bold flex items-center justify-center gap-2 hover:bg-accent/90 shadow-[0_0_25px_rgba(62,224,198,0.35)] transition-all hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <span>EXPLORE LIVE OBSERVATORY</span>
+            <ChevronRight className="w-4 h-4" />
+          </a>
+
+          <button
+            onClick={handleEnterPlatform}
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-panel/80 hover:bg-panel border border-line hover:border-accent text-slate-200 font-mono text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+          >
+            <span>ENTER TRACE SYSTEM</span>
+            <ArrowRight className="w-4 h-4 text-accent" />
+          </button>
+        </motion.div>
+
+        {/* Mission Metrics Banner */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-4xl mt-10 pt-6 border-t border-line/60">
+          <div className="p-3 rounded-xl bg-panel/60 border border-line text-left">
+            <div className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-accent" />
+              <span>LATENCY</span>
+            </div>
+            <div className="text-xl font-mono font-bold text-white mt-1">&lt; 15 Min</div>
+            <div className="text-[10px] text-slate-400">Direct NASA LANCE downlink</div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-panel/60 border border-line text-left">
+            <div className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+              <Satellite className="w-3.5 h-3.5 text-cyan-400" />
+              <span>SWATH</span>
+            </div>
+            <div className="text-xl font-mono font-bold text-cyan-400 mt-1">375m VIIRS</div>
+            <div className="text-[10px] text-slate-400">Sub-kilometer accuracy</div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-panel/60 border border-line text-left">
+            <div className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-warn" />
+              <span>AI ACCURACY</span>
+            </div>
+            <div className="text-xl font-mono font-bold text-warn mt-1">94.2%</div>
+            <div className="text-[10px] text-slate-400">Multi-modal attribution</div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-panel/60 border border-line text-left">
+            <div className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-danger" />
+              <span>IMPACT BLAST</span>
+            </div>
+            <div className="text-xl font-mono font-bold text-danger mt-1">0 - 10 KM</div>
+            <div className="text-[10px] text-slate-400">Dynamic hazard modeling</div>
+          </div>
+        </div>
       </section>
 
-      {/* SECTION: TRACE EARTHWATCH INTERACTIVE OBSERVATORY */}
-      <section id="features" className="relative z-10 border-t border-line/60 bg-[#030814]/90">
+      {/* SECTION 3: TRACE EARTHWATCH (The Living 3D Thermal Earth Observatory) */}
+      <section id="observatory" className="relative z-10 border-t border-line/60 bg-space/80">
         <EarthObservatory />
       </section>
 
-      {/* SECTION: ARCHITECTURE WORKFLOW & DATA MATRIX */}
-      <section id="about" className="relative z-10 py-16 px-6 max-w-7xl mx-auto border-t border-line/60">
+      {/* SECTION 4: ARCHITECTURAL PIPELINE (Detect -> Context -> Attribute -> Act) */}
+      <section id="pipeline" className="relative z-10 py-16 px-4 sm:px-6 max-w-7xl mx-auto border-t border-line/60">
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono mb-2">
-            <Database className="w-3.5 h-3.5" />
-            <span>SYSTEM ARCHITECTURE</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-mono mb-2">
+            <Layers className="w-3.5 h-3.5" />
+            <span>OPERATIONAL WORKFLOW</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">How TRACE Delivers Thermal Clarity</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">How TRACE Transforms Raw Thermal Data</h2>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1">
+            Eliminating false alarms and delivering decision-ready intelligence in seconds.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-5 rounded-xl bg-panel/75 border border-line text-left">
-            <div className="text-xs font-mono text-cyan-400 font-bold mb-2">01. INGESTION</div>
-            <h3 className="text-sm font-bold text-white mb-1">NASA FIRMS API</h3>
+          {/* Card 1 */}
+          <div className="p-5 rounded-2xl bg-panel/75 border border-line hover:border-danger/60 transition-all text-left">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-mono text-danger font-bold">01. DETECT</span>
+              <div className="p-2 rounded-lg bg-danger/10 text-danger border border-danger/30">
+                <Flame className="w-4 h-4" />
+              </div>
+            </div>
+            <h3 className="text-sm font-bold text-white mb-1">NASA FIRMS Ingestion</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Continuous 375m VIIRS radiometry scanning brightness temperature and Fire Radiative Power (FRP).
+              VIIRS & MODIS satellite sensors scan infrared brightness temperatures and calculate Fire Radiative Power (FRP).
             </p>
           </div>
 
-          <div className="p-5 rounded-xl bg-panel/75 border border-line text-left">
-            <div className="text-xs font-mono text-cyan-400 font-bold mb-2">02. FUSION</div>
-            <h3 className="text-sm font-bold text-white mb-1">Sentinel-2 & OSM</h3>
+          {/* Card 2 */}
+          <div className="p-5 rounded-2xl bg-panel/75 border border-line hover:border-accent/60 transition-all text-left">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-mono text-accent font-bold">02. CONTEXT</span>
+              <div className="p-2 rounded-lg bg-accent/10 text-accent border border-accent/30">
+                <Compass className="w-4 h-4" />
+              </div>
+            </div>
+            <h3 className="text-sm font-bold text-white mb-1">Geospatial Fusion</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Spatial alignment with industrial parks, power substations, and multi-spectral vegetation indices.
+              Overlays OpenStreetMap industrial parks, chemical plants, substations, and Sentinel-2 vegetation matrices.
             </p>
           </div>
 
-          <div className="p-5 rounded-xl bg-panel/75 border border-line text-left">
-            <div className="text-xs font-mono text-cyan-400 font-bold mb-2">03. ATTRIBUTION</div>
-            <h3 className="text-sm font-bold text-white mb-1">Ensemble AI</h3>
+          {/* Card 3 */}
+          <div className="p-5 rounded-2xl bg-panel/75 border border-line hover:border-warn/60 transition-all text-left">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-mono text-warn font-bold">03. ATTRIBUTE</span>
+              <div className="p-2 rounded-lg bg-warn/10 text-warn border border-warn/30">
+                <Cpu className="w-4 h-4" />
+              </div>
+            </div>
+            <h3 className="text-sm font-bold text-white mb-1">AI Classification</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Machine learning classifier scoring temporal persistence to distinguish industrial flaring from wildfires.
+              Trained machine learning models differentiate between routine industrial flaring, agricultural burn, and forest wildfires.
             </p>
           </div>
 
-          <div className="p-5 rounded-xl bg-panel/75 border border-line text-left">
-            <div className="text-xs font-mono text-cyan-400 font-bold mb-2">04. DECISION</div>
-            <h3 className="text-sm font-bold text-white mb-1">Hazard Blast Radius</h3>
+          {/* Card 4 */}
+          <div className="p-5 rounded-2xl bg-panel/75 border border-line hover:border-cyan-400/60 transition-all text-left">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-mono text-cyan-400 font-bold">04. ACT</span>
+              <div className="p-2 rounded-lg bg-cyan-400/10 text-cyan-400 border border-cyan-400/30">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+            </div>
+            <h3 className="text-sm font-bold text-white mb-1">Risk Intelligence</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Instant impact footprint modeling and automated actionable advisories for first responders.
+              Computes dynamic hazard buffer radii, automated responder notifications, and mitigation protocols.
             </p>
           </div>
         </div>
       </section>
 
-      {/* FINAL CTA SECTION */}
-      <section className="relative z-10 py-16 px-6 max-w-4xl mx-auto text-center">
-        <div className="relative rounded-3xl p-8 sm:p-10 bg-gradient-to-b from-panel to-ink border border-cyan-500/30 shadow-2xl">
+      {/* SECTION 5: LIVE DATA SOURCES MATRIX */}
+      <section id="datasources" className="relative z-10 py-14 px-4 sm:px-6 max-w-7xl mx-auto border-t border-line/60">
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-400/10 border border-cyan-400/30 text-cyan-400 text-xs font-mono mb-2">
+            <Database className="w-3.5 h-3.5" />
+            <span>DATA CONSTELLATION</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Direct Space & Geospatial Telemetry Feeds</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4 rounded-xl bg-panel/60 border border-line flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-danger/10 text-danger border border-danger/30">
+              <Radio className="w-5 h-5" />
+            </div>
+            <div className="text-left">
+              <h4 className="text-xs font-mono font-bold text-white">NASA FIRMS (LANCE)</h4>
+              <p className="text-xs text-slate-400 mt-1">
+                Near-real-time VIIRS 375m & MODIS 1km active thermal infrared anomaly stream.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-panel/60 border border-line flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-cyan-400/10 text-cyan-400 border border-cyan-400/30">
+              <Eye className="w-5 h-5" />
+            </div>
+            <div className="text-left">
+              <h4 className="text-xs font-mono font-bold text-white">SENTINEL-2 L2A (ESA)</h4>
+              <p className="text-xs text-slate-400 mt-1">
+                10-meter multi-spectral optical and short-wave infrared (SWIR) plume inspection.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-panel/60 border border-line flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-accent/10 text-accent border border-accent/30">
+              <Globe className="w-5 h-5" />
+            </div>
+            <div className="text-left">
+              <h4 className="text-xs font-mono font-bold text-white">OPENSTREETMAP OVERPASS</h4>
+              <p className="text-xs text-slate-400 mt-1">
+                Global topological infrastructure, industrial buffer zones, and land classification.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 6: FINAL CTA */}
+      <section className="relative z-10 py-16 px-4 sm:px-6 max-w-4xl mx-auto text-center">
+        <div className="relative rounded-3xl p-8 sm:p-10 bg-gradient-to-b from-panel to-ink border border-accent/35 shadow-2xl overflow-hidden">
+          <div className="w-12 h-12 mx-auto rounded-xl bg-panel border border-accent/50 p-2 mb-3 shadow-[0_0_20px_rgba(62,224,198,0.25)] flex items-center justify-center">
+            <img src="/trace-logo.png" alt="TRACE" className="w-full h-full object-contain" />
+          </div>
+
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
-            Ready to Initialize TRACE Command Center?
+            TRACE does not guess. TRACE attributes.
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto mb-6">
-            Access live thermal observation zones, explore active hotspot clusters, and evaluate AI attribution reports.
+          <p className="text-sm text-slate-300 max-w-lg mx-auto mb-6">
+            Access the operational command center to monitor live satellite hotspots, run AI spatial attribution, and model mitigation footprints.
           </p>
+
           <button
             onClick={handleEnterPlatform}
-            className="px-8 py-3.5 rounded-xl bg-cyan-400 text-ink font-mono text-xs sm:text-sm font-bold inline-flex items-center gap-2.5 hover:bg-cyan-300 shadow-[0_0_30px_rgba(34,211,238,0.4)] transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="px-8 py-3.5 rounded-xl bg-accent text-ink font-mono text-xs sm:text-sm font-bold inline-flex items-center gap-2.5 hover:bg-accent/90 shadow-[0_0_30px_rgba(62,224,198,0.4)] transition-all hover:scale-105 active:scale-95 cursor-pointer"
           >
-            <span>ENTER COMMAND CENTER</span>
+            <span>INITIALIZE TRACE PLATFORM</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </section>
 
-      {/* Minimal Footer */}
-      <footer className="relative z-10 border-t border-line/80 bg-ink/90 px-6 py-6 text-xs text-slate-500 font-mono">
+      {/* Scientific Mission Footer */}
+      <footer className="relative z-10 border-t border-line/80 bg-ink/90 px-4 sm:px-6 py-6 text-xs text-slate-500 font-mono">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-cyan-400" />
+            <div className="w-5 h-5 rounded bg-panel border border-line p-0.5">
+              <img src="/trace-logo.png" alt="TRACE" className="w-full h-full object-contain" />
+            </div>
             <span>TRACE: Thermal Risk Attribution & Classification Engine</span>
           </div>
+
           <div className="text-slate-400 text-[11px]">
-            NASA FIRMS & ISRO Earth Observation Protocols Compliant
+            NASA FIRMS LANCE & ISRO Earth Observation Standards Compliant
           </div>
         </div>
       </footer>
