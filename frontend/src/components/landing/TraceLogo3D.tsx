@@ -2,30 +2,17 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RotateCcw, Compass } from "lucide-react";
 
-// Precise 3D Shield Outline matching the exact reference proportions
+// Precise 3D Shield Outline matching the exact emblem proportions
 function createShieldShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  shape.moveTo(0, 1.5);
-  shape.lineTo(1.05, 1.25);
-  shape.quadraticCurveTo(1.18, 0.28, 0.95, -0.45);
-  shape.quadraticCurveTo(0.72, -1.15, 0, -1.65);
-  shape.quadraticCurveTo(-0.72, -1.15, -0.95, -0.45);
-  shape.quadraticCurveTo(-1.18, 0.28, -1.05, 1.25);
-  shape.lineTo(0, 1.5);
+  shape.moveTo(0, 1.25);
+  shape.lineTo(0.95, 1.05);
+  shape.quadraticCurveTo(1.08, 0.22, 0.88, -0.42);
+  shape.quadraticCurveTo(0.65, -1.05, 0, -1.45);
+  shape.quadraticCurveTo(-0.65, -1.05, -0.88, -0.42);
+  shape.quadraticCurveTo(-1.08, 0.22, -0.95, 1.05);
+  shape.lineTo(0, 1.25);
   return shape;
-}
-
-// Inner Cutout for the Hollow Frame
-function createInnerShieldHole(): THREE.Path {
-  const hole = new THREE.Path();
-  hole.moveTo(0, 1.34);
-  hole.lineTo(0.9, 1.12);
-  hole.quadraticCurveTo(1.02, 0.24, 0.82, -0.38);
-  hole.quadraticCurveTo(0.62, -0.98, 0, -1.45);
-  hole.quadraticCurveTo(-0.62, -0.98, -0.82, -0.38);
-  hole.quadraticCurveTo(-1.02, 0.24, -0.9, 1.12);
-  hole.lineTo(0, 1.34);
-  return hole;
 }
 
 export function TraceLogo3D() {
@@ -40,13 +27,13 @@ export function TraceLogo3D() {
     const mount = mountRef.current;
     if (!mount) return;
 
-    const width = mount.clientWidth || 500;
-    const height = mount.clientHeight || 500;
+    const width = mount.clientWidth || 480;
+    const height = mount.clientHeight || 480;
 
     // --- 1. Three.js Scene, Camera, Renderer ---
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
-    camera.position.set(0, 0, 4.9);
+    const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
+    camera.position.set(0, 0, 4.6);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
@@ -54,27 +41,27 @@ export function TraceLogo3D() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.15;
     mount.appendChild(renderer.domElement);
 
-    // --- 2. Cinematic PBR Studio Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.15);
+    // --- 2. Studio PBR Lighting ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    // Top-Left Key Light (Matches reference lighting on shield)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
-    keyLight.position.set(-3.5, 4.5, 4.0);
+    // Key Light (Top-Left)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    keyLight.position.set(-3.0, 4.0, 4.0);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
-    // Right Soft Rim Light
-    const rightRim = new THREE.DirectionalLight(0x22d3ee, 1.8);
-    rightRim.position.set(4.0, 1.5, -2.0);
+    // Soft Right Rim Light
+    const rightRim = new THREE.DirectionalLight(0x22d3ee, 1.5);
+    rightRim.position.set(3.5, 1.0, -2.0);
     scene.add(rightRim);
 
-    // Front Soft Fill
-    const frontLight = new THREE.PointLight(0xffffff, 1.2, 8);
-    frontLight.position.set(0, 0.5, 3.8);
+    // Front Soft Light
+    const frontLight = new THREE.PointLight(0xffffff, 1.0, 8);
+    frontLight.position.set(0, 0, 3.5);
     scene.add(frontLight);
 
     // --- 3. Master 3D Model Group ---
@@ -82,74 +69,62 @@ export function TraceLogo3D() {
     scene.add(modelGroup);
 
     // ----------------------------------------------------
-    // A. 3D EXTRUDED SHIELD FRAME (Dark Navy Outer Rim)
+    // A. SOLID 3D EXTRUDED SHIELD BODY (Backing & Bevels)
     // ----------------------------------------------------
     const shieldShape = createShieldShape();
-    const shieldHole = createInnerShieldHole();
-    shieldShape.holes.push(shieldHole);
-
-    const frameExtrudeSettings: THREE.ExtrudeGeometryOptions = {
-      depth: 0.26,
+    const extrudeSettings: THREE.ExtrudeGeometryOptions = {
+      depth: 0.16, // Clean 3D thickness
       bevelEnabled: true,
-      bevelSegments: 5,
-      steps: 2,
-      bevelSize: 0.05,
-      bevelThickness: 0.05,
+      bevelSegments: 4,
+      steps: 1,
+      bevelSize: 0.035,
+      bevelThickness: 0.035,
     };
 
-    const frameGeometry = new THREE.ExtrudeGeometry(shieldShape, frameExtrudeSettings);
-    frameGeometry.center();
+    const shieldGeometry = new THREE.ExtrudeGeometry(shieldShape, extrudeSettings);
+    shieldGeometry.center();
 
-    // Dark Navy Satin PBR Material
-    const frameMaterial = new THREE.MeshStandardMaterial({
-      color: 0x182433,
-      metalness: 0.75,
-      roughness: 0.3,
+    // Dark Navy Metallic Material for the 3D Extruded Sides & Bevel
+    const shieldMaterial = new THREE.MeshStandardMaterial({
+      color: 0x141f2d,
+      metalness: 0.85,
+      roughness: 0.25,
     });
-    const frameMesh = new THREE.Mesh(frameGeometry, frameMaterial);
-    frameMesh.castShadow = true;
-    frameMesh.receiveShadow = true;
-    modelGroup.add(frameMesh);
+    const shieldMesh = new THREE.Mesh(shieldGeometry, shieldMaterial);
+    shieldMesh.castShadow = true;
+    shieldMesh.receiveShadow = true;
+    modelGroup.add(shieldMesh);
 
     // ----------------------------------------------------
-    // B. WHITE BEVELED INNER CONTOUR BORDER
-    // ----------------------------------------------------
-    const innerLipShape = createInnerShieldHole();
-    const innerLipPath = new THREE.Path(innerLipShape.getPoints());
-    const innerLipGeom = new THREE.BufferGeometry().setFromPoints(innerLipPath.getPoints(64));
-    const innerLipMat = new THREE.LineBasicMaterial({
-      color: 0xffffff,
-      linewidth: 3,
-    });
-    const innerLipLine = new THREE.LineLoop(innerLipGeom, innerLipMat);
-    innerLipLine.position.z = 0.14;
-    modelGroup.add(innerLipLine);
-
-    // ----------------------------------------------------
-    // C. EXACT 3D EMBLEM INLAYS (Clean Front & Back 360°)
+    // B. EXACT 3D EMBLEM TEXTURE (Perfect Fit Front & Back)
     // ----------------------------------------------------
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load("/trace-3d-model-transparent.png", (texture) => {
+    textureLoader.load("/trace-3d-model-clean.png", (texture) => {
       texture.generateMipmaps = true;
       texture.minFilter = THREE.LinearMipmapLinearFilter;
 
-      // Front Emblem Plane
-      const planeGeom = new THREE.PlaneGeometry(2.35, 2.5);
+      // Aspect ratio of trace-3d-model-clean is 402:372 = 1.08
+      const planeWidth = 2.15;
+      const planeHeight = 2.15 * (372 / 402);
+
+      const planeGeom = new THREE.PlaneGeometry(planeWidth, planeHeight);
       const planeMat = new THREE.MeshStandardMaterial({
         map: texture,
         transparent: true,
-        metalness: 0.45,
-        roughness: 0.25,
+        metalness: 0.35,
+        roughness: 0.3,
         side: THREE.DoubleSide,
       });
+
+      // Front Face
       const frontEmblem = new THREE.Mesh(planeGeom, planeMat);
-      frontEmblem.position.set(0, -0.05, 0.08);
+      frontEmblem.position.set(0, 0, 0.118);
       modelGroup.add(frontEmblem);
 
-      // Back Emblem Plane (Visible when rotated 180°)
+      // Back Face (For 360° Rotation)
       const backEmblem = new THREE.Mesh(planeGeom, planeMat);
       backEmblem.rotation.y = Math.PI;
-      backEmblem.position.set(0, -0.05, -0.08);
+      backEmblem.position.set(0, 0, -0.118);
       modelGroup.add(backEmblem);
     });
 
@@ -159,7 +134,7 @@ export function TraceLogo3D() {
       modelGroup,
     };
 
-    // --- 4. Interactive Mouse Drag & Physics ---
+    // --- 4. Interactive Mouse Drag Controls ---
     let isDragging = false;
     let prevMousePos = { x: 0, y: 0 };
 
@@ -188,7 +163,7 @@ export function TraceLogo3D() {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
 
-    // --- 5. 60FPS Render & Floating Animation Loop ---
+    // --- 5. 60FPS Floating & Render Loop ---
     let animationId: number;
     let clock = new THREE.Clock();
 
@@ -199,13 +174,13 @@ export function TraceLogo3D() {
       if (sceneStateRef.current) {
         const { modelGroup } = sceneStateRef.current;
 
-        // Floating breathing physics
-        const floatY = Math.sin(elapsed * 1.2) * 0.06;
+        // Subtle floating breathing motion
+        const floatY = Math.sin(elapsed * 1.2) * 0.05;
         modelGroup.position.y = floatY;
 
         if (!isDragging) {
-          const idleRotY = sceneStateRef.current.targetRotY + Math.sin(elapsed * 0.6) * 0.12;
-          const idleRotX = sceneStateRef.current.targetRotX + Math.cos(elapsed * 0.5) * 0.05;
+          const idleRotY = sceneStateRef.current.targetRotY + Math.sin(elapsed * 0.6) * 0.1;
+          const idleRotX = sceneStateRef.current.targetRotX + Math.cos(elapsed * 0.5) * 0.04;
 
           modelGroup.rotation.y += (idleRotY - modelGroup.rotation.y) * 0.05;
           modelGroup.rotation.x += (idleRotX - modelGroup.rotation.x) * 0.05;
@@ -253,11 +228,7 @@ export function TraceLogo3D() {
 
   return (
     <div className="relative flex flex-col items-center justify-center w-full max-w-2xl mx-auto select-none">
-      {/* Background Soft Glow Halos */}
-      <div className="absolute w-80 h-80 sm:w-96 sm:h-96 rounded-full bg-accent/10 blur-3xl pointer-events-none -z-10 animate-pulse-slow" />
-      <div className="absolute w-64 h-64 rounded-full bg-danger/10 blur-2xl pointer-events-none -z-10" />
-
-      {/* 3D WebGL Canvas Viewport */}
+      {/* Clean 3D WebGL Canvas Viewport (No blurry glow halos) */}
       <div className="relative w-full h-[380px] sm:h-[440px] flex items-center justify-center cursor-grab active:cursor-grabbing">
         <div ref={mountRef} className="w-full h-full" />
 
