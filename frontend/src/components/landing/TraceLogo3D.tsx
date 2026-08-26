@@ -2,30 +2,30 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RotateCcw, Compass } from "lucide-react";
 
-// Precise 3D Shield Curve Shape with authentic proportions
+// Precise 3D Shield Outline matching the exact reference proportions
 function createShieldShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  shape.moveTo(0, 1.4);
-  shape.lineTo(0.96, 1.18);
-  shape.quadraticCurveTo(1.08, 0.25, 0.88, -0.42);
-  shape.quadraticCurveTo(0.68, -1.05, 0, -1.5);
-  shape.quadraticCurveTo(-0.68, -1.05, -0.88, -0.42);
-  shape.quadraticCurveTo(-1.08, 0.25, -0.96, 1.18);
-  shape.lineTo(0, 1.4);
+  shape.moveTo(0, 1.5);
+  shape.lineTo(1.05, 1.25);
+  shape.quadraticCurveTo(1.18, 0.28, 0.95, -0.45);
+  shape.quadraticCurveTo(0.72, -1.15, 0, -1.65);
+  shape.quadraticCurveTo(-0.72, -1.15, -0.95, -0.45);
+  shape.quadraticCurveTo(-1.18, 0.28, -1.05, 1.25);
+  shape.lineTo(0, 1.5);
   return shape;
 }
 
-// Inner Inset Shield Shape for Layered Beveling
-function createInnerShieldShape(): THREE.Shape {
-  const shape = new THREE.Shape();
-  shape.moveTo(0, 1.3);
-  shape.lineTo(0.88, 1.1);
-  shape.quadraticCurveTo(0.98, 0.22, 0.8, -0.38);
-  shape.quadraticCurveTo(0.62, -0.96, 0, -1.38);
-  shape.quadraticCurveTo(-0.62, -0.96, -0.8, -0.38);
-  shape.quadraticCurveTo(-0.98, 0.22, -0.88, 1.1);
-  shape.lineTo(0, 1.3);
-  return shape;
+// Inner Cutout for the Hollow Frame
+function createInnerShieldHole(): THREE.Path {
+  const hole = new THREE.Path();
+  hole.moveTo(0, 1.34);
+  hole.lineTo(0.9, 1.12);
+  hole.quadraticCurveTo(1.02, 0.24, 0.82, -0.38);
+  hole.quadraticCurveTo(0.62, -0.98, 0, -1.45);
+  hole.quadraticCurveTo(-0.62, -0.98, -0.82, -0.38);
+  hole.quadraticCurveTo(-1.02, 0.24, -0.9, 1.12);
+  hole.lineTo(0, 1.34);
+  return hole;
 }
 
 export function TraceLogo3D() {
@@ -35,20 +35,19 @@ export function TraceLogo3D() {
     targetRotY: number;
     modelGroup: THREE.Group;
     rings: THREE.Mesh[];
-    particles: THREE.Points;
   } | null>(null);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
-    const width = mount.clientWidth || 480;
-    const height = mount.clientHeight || 480;
+    const width = mount.clientWidth || 500;
+    const height = mount.clientHeight || 500;
 
     // --- 1. Three.js Scene, Camera, Renderer ---
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
-    camera.position.set(0, 0.1, 4.8);
+    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    camera.position.set(0, 0, 4.9);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
@@ -56,210 +55,226 @@ export function TraceLogo3D() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    renderer.toneMappingExposure = 1.2;
     mount.appendChild(renderer.domElement);
 
-    // --- 2. Cinematic PBR Lighting ---
-    // Soft Ambient
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    // --- 2. Cinematic PBR Studio Lighting ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
     scene.add(ambientLight);
 
-    // Key Light (Warm White)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
-    keyLight.position.set(3.5, 4.0, 4.5);
+    // Top-Left Key Light (Matches reference lighting on top-left of shield)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
+    keyLight.position.set(-3.5, 4.5, 4.0);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
-    // Cool Cyan Rim Light (Left/Back)
-    const cyanRim = new THREE.DirectionalLight(0x3ee0c6, 3.5);
-    cyanRim.position.set(-4.0, 2.0, -2.5);
-    scene.add(cyanRim);
+    // Right Rim Light
+    const rightRim = new THREE.DirectionalLight(0x22d3ee, 2.2);
+    rightRim.position.set(4.0, 1.5, -2.0);
+    scene.add(rightRim);
 
-    // Deep Orange Fill Light (Bottom/Right for thermal glow)
-    const orangeFill = new THREE.PointLight(0xff6b4a, 2.8, 10);
-    orangeFill.position.set(3.0, -2.5, 2.0);
-    scene.add(orangeFill);
+    // Bottom Soft Warm Fill
+    const warmFill = new THREE.PointLight(0xff7744, 2.0, 10);
+    warmFill.position.set(2.0, -3.0, 2.5);
+    scene.add(warmFill);
 
-    // Front Subtle Specular Light
-    const frontSoft = new THREE.PointLight(0x22d3ee, 1.8, 8);
-    frontSoft.position.set(0, 1.5, 3.5);
-    scene.add(frontSoft);
+    // Front Specular
+    const frontLight = new THREE.PointLight(0xffffff, 1.5, 8);
+    frontLight.position.set(0, 0.5, 3.8);
+    scene.add(frontLight);
 
     // --- 3. Master 3D Model Group ---
     const modelGroup = new THREE.Group();
     scene.add(modelGroup);
 
     // ----------------------------------------------------
-    // A. 3D VOLUMETRIC METALLIC SHIELD BEZEL (Outer Frame)
+    // A. 3D EXTRUDED SHIELD FRAME (Dark Navy Outer Rim)
     // ----------------------------------------------------
-    const outerShape = createShieldShape();
-    const outerExtrudeSettings: THREE.ExtrudeGeometryOptions = {
-      depth: 0.22, // Substantial 3D thickness
+    const shieldShape = createShieldShape();
+    const shieldHole = createInnerShieldHole();
+    shieldShape.holes.push(shieldHole);
+
+    const frameExtrudeSettings: THREE.ExtrudeGeometryOptions = {
+      depth: 0.26,
       bevelEnabled: true,
-      bevelSegments: 6,
+      bevelSegments: 5,
       steps: 2,
-      bevelSize: 0.06,
-      bevelThickness: 0.06,
+      bevelSize: 0.05,
+      bevelThickness: 0.05,
     };
-    const outerGeometry = new THREE.ExtrudeGeometry(outerShape, outerExtrudeSettings);
-    outerGeometry.center();
 
-    // Brushed Dark Titanium / Navy PBR Material
-    const bezelMaterial = new THREE.MeshStandardMaterial({
-      color: 0x091929,
-      metalness: 0.88,
-      roughness: 0.22,
-      envMapIntensity: 1.2,
-    });
-    const outerMesh = new THREE.Mesh(outerGeometry, bezelMaterial);
-    outerMesh.castShadow = true;
-    outerMesh.receiveShadow = true;
-    modelGroup.add(outerMesh);
+    const frameGeometry = new THREE.ExtrudeGeometry(shieldShape, frameExtrudeSettings);
+    frameGeometry.center();
 
-    // Cyan Emissive Edge Rim Accent
-    const edgeGeom = new THREE.EdgesGeometry(outerGeometry, 22);
-    const edgeMat = new THREE.LineBasicMaterial({
-      color: 0x3ee0c6,
-      transparent: true,
-      opacity: 0.65,
+    // Dark Navy Matte/Satin Material
+    const frameMaterial = new THREE.MeshStandardMaterial({
+      color: 0x182433,
+      metalness: 0.75,
+      roughness: 0.3,
     });
-    const edgeLines = new THREE.LineSegments(edgeGeom, edgeMat);
-    modelGroup.add(edgeLines);
+    const frameMesh = new THREE.Mesh(frameGeometry, frameMaterial);
+    frameMesh.castShadow = true;
+    frameMesh.receiveShadow = true;
+    modelGroup.add(frameMesh);
+
+    // White Beveled Inner Rim Border
+    const whiteRimShape = createInnerShieldHole();
+    const whiteRimPath = new THREE.Path(whiteRimShape.getPoints());
+    const whiteRimGeom = new THREE.BufferGeometry().setFromPoints(whiteRimPath.getPoints(64));
+    const whiteRimMat = new THREE.LineBasicMaterial({
+      color: 0xffffff,
+      linewidth: 3,
+    });
+    const whiteRimLine = new THREE.LineLoop(whiteRimGeom, whiteRimMat);
+    whiteRimLine.position.z = 0.14;
+    modelGroup.add(whiteRimLine);
 
     // ----------------------------------------------------
-    // B. INSET CERAMIC / COMPOSITE FACEPLATE (Middle Layer)
-    // ----------------------------------------------------
-    const innerShape = createInnerShieldShape();
-    const innerExtrudeSettings: THREE.ExtrudeGeometryOptions = {
-      depth: 0.08,
-      bevelEnabled: true,
-      bevelSegments: 4,
-      steps: 1,
-      bevelSize: 0.02,
-      bevelThickness: 0.02,
-    };
-    const innerGeometry = new THREE.ExtrudeGeometry(innerShape, innerExtrudeSettings);
-    innerGeometry.center();
-
-    const innerMaterial = new THREE.MeshStandardMaterial({
-      color: 0x05101c,
-      metalness: 0.7,
-      roughness: 0.35,
-    });
-    const innerMesh = new THREE.Mesh(innerGeometry, innerMaterial);
-    innerMesh.position.z = 0.1;
-    modelGroup.add(innerMesh);
-
-    // ----------------------------------------------------
-    // C. 3D HIGH-RESOLUTION EMBLEM WITH DEPTH & SHEEN
+    // B. EXACT 3D EMBLEM TEXTURE INLAYS (Front & Back 360°)
     // ----------------------------------------------------
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load("/trace-logo.png", (texture) => {
+    textureLoader.load("/trace-3d-model-transparent.png", (texture) => {
       texture.generateMipmaps = true;
       texture.minFilter = THREE.LinearMipmapLinearFilter;
-      
-      const planeGeom = new THREE.PlaneGeometry(2.08, 2.28);
+
+      // Front 3D Inlay Plane
+      const planeGeom = new THREE.PlaneGeometry(2.35, 2.5);
       const planeMat = new THREE.MeshStandardMaterial({
         map: texture,
         transparent: true,
-        metalness: 0.45,
+        metalness: 0.5,
         roughness: 0.25,
         side: THREE.DoubleSide,
       });
-      const planeMesh = new THREE.Mesh(planeGeom, planeMat);
-      planeMesh.position.z = 0.16;
-      modelGroup.add(planeMesh);
+      const frontEmblem = new THREE.Mesh(planeGeom, planeMat);
+      frontEmblem.position.set(0, -0.05, 0.08);
+      modelGroup.add(frontEmblem);
 
-      // Backside Inlay Badge (Visible when rotated 180 degrees!)
-      const backBadgeGeom = new THREE.PlaneGeometry(1.8, 2.0);
-      const backBadgeMat = new THREE.MeshStandardMaterial({
-        map: texture,
-        transparent: true,
-        opacity: 0.8,
-        metalness: 0.6,
-        roughness: 0.3,
-        side: THREE.DoubleSide,
-      });
-      const backBadgeMesh = new THREE.Mesh(backBadgeGeom, backBadgeMat);
-      backBadgeMesh.rotation.y = Math.PI;
-      backBadgeMesh.position.z = -0.16;
-      modelGroup.add(backBadgeMesh);
+      // Back Inlay Plane (Visible upon full 360° rotation)
+      const backEmblem = new THREE.Mesh(planeGeom, planeMat);
+      backEmblem.rotation.y = Math.PI;
+      backEmblem.position.set(0, -0.05, -0.08);
+      modelGroup.add(backEmblem);
     });
 
     // ----------------------------------------------------
-    // D. 3D VOLUMETRIC SATELLITE DISH & EMITTING ANTENNA
+    // C. PHYSICAL 3D SATELLITE DISH & FEED HORN
     // ----------------------------------------------------
     const dishGroup = new THREE.Group();
-    dishGroup.position.set(0, 0.45, 0.2);
+    dishGroup.position.set(0.08, 0.42, 0.22);
 
-    // Parabolic Dish geometry
-    const dishGeom = new THREE.ConeGeometry(0.38, 0.16, 32, 1, true);
+    // 3D Parabolic Satellite Dish Cone
+    const dishGeom = new THREE.ConeGeometry(0.44, 0.2, 36, 1, true);
     const dishMat = new THREE.MeshStandardMaterial({
-      color: 0x1b3a4b,
-      metalness: 0.92,
-      roughness: 0.18,
+      color: 0x2b4e78,
+      metalness: 0.85,
+      roughness: 0.25,
       side: THREE.DoubleSide,
     });
     const dishMesh = new THREE.Mesh(dishGeom, dishMat);
-    dishMesh.rotation.x = -Math.PI * 0.34;
-    dishMesh.rotation.z = Math.PI * 0.08;
+    dishMesh.rotation.x = -Math.PI * 0.38;
+    dishMesh.rotation.z = Math.PI * 0.12;
     dishGroup.add(dishMesh);
 
     // Subreflector Feed Horn
-    const hornGeom = new THREE.CylinderGeometry(0.02, 0.035, 0.24, 16);
+    const hornGeom = new THREE.CylinderGeometry(0.025, 0.045, 0.28, 16);
     const hornMat = new THREE.MeshStandardMaterial({
       color: 0x3ee0c6,
+      metalness: 0.9,
+      roughness: 0.2,
       emissive: 0x3ee0c6,
-      emissiveIntensity: 0.4,
-      metalness: 0.95,
+      emissiveIntensity: 0.3,
     });
     const hornMesh = new THREE.Mesh(hornGeom, hornMat);
-    hornMesh.position.set(0, 0.12, 0.12);
-    hornMesh.rotation.x = -Math.PI * 0.34;
+    hornMesh.position.set(0.02, 0.14, 0.14);
+    hornMesh.rotation.x = -Math.PI * 0.38;
     dishGroup.add(hornMesh);
+
+    // 3 Radiating 3D Signal Waves in Sky-Blue
+    [0.26, 0.36, 0.46].forEach((r) => {
+      const arcGeom = new THREE.RingGeometry(r, r + 0.025, 24, 1, 0, Math.PI * 0.65);
+      const arcMat = new THREE.MeshStandardMaterial({
+        color: 0x4d82c4,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.85,
+        emissive: 0x4d82c4,
+        emissiveIntensity: 0.4,
+      });
+      const arc = new THREE.Mesh(arcGeom, arcMat);
+      arc.position.set(0.12, 0.32, 0.26);
+      arc.rotation.z = Math.PI * 0.45;
+      dishGroup.add(arc);
+    });
 
     modelGroup.add(dishGroup);
 
     // ----------------------------------------------------
-    // E. 3D GLOWING THERMAL HOTSPOT MATRIX (Bottom Left)
+    // D. 3D GLOWING THERMAL HOTSPOT MATRIX CUBES (Left)
     // ----------------------------------------------------
     const thermalGroup = new THREE.Group();
-    const thermalTileGeom = new THREE.BoxGeometry(0.08, 0.08, 0.04);
+    const thermalTileGeom = new THREE.BoxGeometry(0.09, 0.09, 0.05);
     const thermalTileMat = new THREE.MeshStandardMaterial({
-      color: 0xff6b4a,
+      color: 0xff6347,
       emissive: 0xff4500,
-      emissiveIntensity: 1.5,
-      metalness: 0.3,
+      emissiveIntensity: 1.4,
+      metalness: 0.4,
       roughness: 0.2,
     });
 
-    const tileOffsets = [
-      [-0.42, -0.36],
-      [-0.32, -0.36],
-      [-0.22, -0.36],
-      [-0.42, -0.46],
-      [-0.32, -0.46],
-      [-0.42, -0.56],
+    const tileGrid = [
+      [-0.42, -0.42],
+      [-0.31, -0.42],
+      [-0.20, -0.42],
+      [-0.42, -0.53],
+      [-0.31, -0.53],
+      [-0.42, -0.64],
     ];
 
-    tileOffsets.forEach(([x, y]) => {
+    tileGrid.forEach(([x, y]) => {
       const tile = new THREE.Mesh(thermalTileGeom, thermalTileMat);
-      tile.position.set(x, y, 0.18);
+      tile.position.set(x, y, 0.16);
       thermalGroup.add(tile);
     });
     modelGroup.add(thermalGroup);
 
     // ----------------------------------------------------
-    // F. 3D ORBITAL GYROSCOPE RINGS (Surrounding Environment)
+    // E. 3D GREEN NETWORK NODES & ECOLOGY NODES (Right)
+    // ----------------------------------------------------
+    const netGroup = new THREE.Group();
+    const netNodeGeom = new THREE.SphereGeometry(0.035, 16, 16);
+    const netNodeMat = new THREE.MeshStandardMaterial({
+      color: 0x2bb673,
+      emissive: 0x2bb673,
+      emissiveIntensity: 0.8,
+      metalness: 0.6,
+    });
+
+    const nodeCoords = [
+      [0.22, -0.42],
+      [0.36, -0.48],
+      [0.28, -0.62],
+      [0.44, -0.66],
+    ];
+
+    nodeCoords.forEach(([x, y]) => {
+      const node = new THREE.Mesh(netNodeGeom, netNodeMat);
+      node.position.set(x, y, 0.16);
+      netGroup.add(node);
+    });
+    modelGroup.add(netGroup);
+
+    // ----------------------------------------------------
+    // F. SURROUNDING GYROSCOPIC SATELLITE ORBIT RINGS
     // ----------------------------------------------------
     const rings: THREE.Mesh[] = [];
 
-    // Equatorial Cyan Gyro Ring
-    const gyro1Geom = new THREE.TorusGeometry(1.95, 0.012, 16, 80);
+    // Equatorial Cyan Ring
+    const gyro1Geom = new THREE.TorusGeometry(2.1, 0.012, 16, 96);
     const gyro1Mat = new THREE.MeshStandardMaterial({
       color: 0x3ee0c6,
       emissive: 0x3ee0c6,
-      emissiveIntensity: 0.6,
+      emissiveIntensity: 0.5,
       transparent: true,
       opacity: 0.55,
     });
@@ -268,54 +283,26 @@ export function TraceLogo3D() {
     scene.add(gyro1);
     rings.push(gyro1);
 
-    // Inclined Amber Sensor Swath Ring
-    const gyro2Geom = new THREE.TorusGeometry(2.25, 0.008, 16, 80);
+    // Inclined Amber Ring
+    const gyro2Geom = new THREE.TorusGeometry(2.4, 0.009, 16, 96);
     const gyro2Mat = new THREE.MeshStandardMaterial({
-      color: 0xff6b4a,
-      emissive: 0xff6b4a,
+      color: 0xff7744,
+      emissive: 0xff7744,
       emissiveIntensity: 0.4,
       transparent: true,
       opacity: 0.4,
     });
     const gyro2 = new THREE.Mesh(gyro2Geom, gyro2Mat);
-    gyro2.rotation.y = Math.PI * 0.28;
-    gyro2.rotation.x = -Math.PI * 0.22;
+    gyro2.rotation.y = Math.PI * 0.32;
+    gyro2.rotation.x = -Math.PI * 0.24;
     scene.add(gyro2);
     rings.push(gyro2);
-
-    // ----------------------------------------------------
-    // G. FLOATING COSMIC TELEMETRY PARTICLES
-    // ----------------------------------------------------
-    const particleCount = 70;
-    const particleGeom = new THREE.BufferGeometry();
-    const particlePositions = new Float32Array(particleCount * 3);
-
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      const r = 2.0 + Math.random() * 1.5;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = (Math.random() - 0.5) * Math.PI;
-
-      particlePositions[i] = r * Math.cos(phi) * Math.sin(theta);
-      particlePositions[i + 1] = r * Math.sin(phi);
-      particlePositions[i + 2] = r * Math.cos(phi) * Math.cos(theta);
-    }
-
-    particleGeom.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
-    const particleMat = new THREE.PointsMaterial({
-      color: 0x3ee0c6,
-      size: 0.035,
-      transparent: true,
-      opacity: 0.6,
-    });
-    const particles = new THREE.Points(particleGeom, particleMat);
-    scene.add(particles);
 
     sceneStateRef.current = {
       targetRotX: 0,
       targetRotY: 0,
       modelGroup,
       rings,
-      particles,
     };
 
     // --- 4. Interactive Mouse Drag & Physics ---
@@ -334,8 +321,6 @@ export function TraceLogo3D() {
 
       sceneStateRef.current.targetRotY += deltaX * 0.007;
       sceneStateRef.current.targetRotX += deltaY * 0.007;
-
-      // Smooth clamp on vertical tilt so user can appreciate full 3D bevels without flipping
       sceneStateRef.current.targetRotX = Math.max(-0.65, Math.min(0.65, sceneStateRef.current.targetRotX));
 
       prevMousePos = { x: e.clientX, y: e.clientY };
@@ -349,7 +334,7 @@ export function TraceLogo3D() {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
 
-    // --- 5. Smooth 60FPS Render & Floating Animation Loop ---
+    // --- 5. 60FPS Render & Floating Animation Loop ---
     let animationId: number;
     let clock = new THREE.Clock();
 
@@ -358,13 +343,12 @@ export function TraceLogo3D() {
       const elapsed = clock.getElapsedTime();
 
       if (sceneStateRef.current) {
-        const { modelGroup, rings, particles } = sceneStateRef.current;
+        const { modelGroup, rings } = sceneStateRef.current;
 
-        // Subtle, elegant breathing floating motion
+        // Floating breathing physics
         const floatY = Math.sin(elapsed * 1.2) * 0.06;
         modelGroup.position.y = floatY;
 
-        // Idle slow intelligent drift when not actively dragged
         if (!isDragging) {
           const idleRotY = sceneStateRef.current.targetRotY + Math.sin(elapsed * 0.6) * 0.12;
           const idleRotX = sceneStateRef.current.targetRotX + Math.cos(elapsed * 0.5) * 0.05;
@@ -376,14 +360,12 @@ export function TraceLogo3D() {
           modelGroup.rotation.x += (sceneStateRef.current.targetRotX - modelGroup.rotation.x) * 0.12;
         }
 
-        // Gyroscope rotation around the intact 3D core
+        // Gyroscope rotation
         rings[0].rotation.z += 0.003;
         rings[1].rotation.z -= 0.002;
-        particles.rotation.y += 0.001;
 
-        // Dynamic thermal hotspot pulse
-        const pulse = 1.2 + 0.4 * Math.sin(elapsed * 3.5);
-        thermalTileMat.emissiveIntensity = pulse;
+        // Thermal matrix pulse
+        thermalTileMat.emissiveIntensity = 1.2 + 0.35 * Math.sin(elapsed * 3.5);
       }
 
       renderer.render(scene, camera);
@@ -429,13 +411,13 @@ export function TraceLogo3D() {
       <div className="absolute w-64 h-64 rounded-full bg-danger/10 blur-2xl pointer-events-none -z-10" />
 
       {/* 3D WebGL Canvas Viewport */}
-      <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center cursor-grab active:cursor-grabbing">
+      <div className="relative w-full h-[380px] sm:h-[440px] flex items-center justify-center cursor-grab active:cursor-grabbing">
         <div ref={mountRef} className="w-full h-full" />
 
-        {/* Minimal Floating Telemetry Badge */}
+        {/* Floating Telemetry Badge */}
         <div className="absolute top-2 left-3 px-2.5 py-1 rounded-lg bg-panel/85 border border-line-bright text-[10px] font-mono text-slate-300 backdrop-blur-md pointer-events-none shadow-sm flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
-          <span>3D VOLUMETRIC CORE // TITANIUM BEZEL</span>
+          <span>TRACE 3D VOLUMETRIC SHIELD // METALLIC CORE</span>
         </div>
 
         {/* Reset Orientation Button */}
@@ -450,7 +432,7 @@ export function TraceLogo3D() {
         {/* Bottom Interactive Hint */}
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-ink/75 border border-line text-[10px] font-mono text-slate-400 backdrop-blur-md pointer-events-none">
           <Compass className="w-3 h-3 text-accent" />
-          <span>DRAG TO ROTATE 3D OBJECT (360° DEPTH)</span>
+          <span>DRAG TO ROTATE 3D MODEL (360° DEPTH)</span>
         </div>
       </div>
     </div>
