@@ -22,17 +22,16 @@ export function LandingPage() {
 
   return (
     <div className="relative min-h-screen bg-[#02050b] text-slate-100 overflow-x-hidden selection:bg-accent selection:text-ink font-sans">
-      {/* Background Subtle Tech Grid & Ambient Star Atmosphere */}
+      {/* Background Subtle Tech Grid & Ambient Space Atmosphere */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-tech-grid opacity-15" />
         <div className="absolute inset-0 bg-scanlines opacity-5" />
-        {/* Subtle cyan ambient glows */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* Header — Matching Reference Image */}
-      <header className="relative z-40 border-b border-line/60 bg-space/60 backdrop-blur-md">
+      <header className="relative z-40 border-b border-line/40 bg-space/40 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           {/* Logo with Pulse Wave Icon */}
           <div
@@ -51,51 +50,61 @@ export function LandingPage() {
           <nav className="flex items-center text-xs font-mono tracking-wider text-slate-300">
             <a
               href="#about"
-              className="px-4 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
+              className="px-5 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
             >
               ABOUT
             </a>
             <a
               href="#features"
-              className="px-4 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
+              className="px-5 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
             >
               FEATURES
             </a>
             <a
               href="#technology"
-              className="px-4 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
+              className="px-5 py-1 hover:text-cyan-400 transition-colors border-r border-line/80"
             >
               TECHNOLOGY
             </a>
             <button
               onClick={handleEnterPlatform}
-              className="pl-4 py-1 text-cyan-400 font-bold hover:text-white transition-colors cursor-pointer"
+              className="pl-5 py-1 text-cyan-400 font-bold hover:text-white transition-colors cursor-pointer"
             >
-              ACCESS GATEWAY
+              CONTACT
             </button>
           </nav>
         </div>
       </header>
 
-      {/* HERO SECTION — Matching media_1787753768661.png */}
-      <section className="relative z-10 min-h-[calc(100vh-110px)] max-w-7xl mx-auto px-6 py-8 flex flex-col justify-between">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1 my-auto">
-          {/* Left Column: 3D Earth at Night with Glowing City Lights & Orbit Trajectories (6 Cols) */}
+      {/* HERO SECTION — Matching media_1787754294571.png */}
+      <section className="relative z-10 min-h-[calc(100vh-110px)] max-w-7xl mx-auto px-6 py-6 flex flex-col justify-between">
+        <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1 my-auto">
+          {/* Left Column: Exact Photorealistic 3D Earth at Night with Orbiting Satellites (6 Cols) */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
+            initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.7 }}
             className="lg:col-span-6 flex items-center justify-center relative"
           >
             <RealisticEarth />
           </motion.div>
 
+          {/* Vertical Divider Line with Tech Markers (Matching Reference Image) */}
+          <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-line/50 pointer-events-none">
+            {/* Top Square Box Marker */}
+            <div className="absolute top-[22%] -left-[3px] w-[7px] h-[7px] bg-slate-300 border border-slate-400" />
+            {/* Middle Cyan Blip Marker */}
+            <div className="absolute top-[52%] -left-[3px] w-[7px] h-[7px] bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+            {/* Bottom White Blip Marker */}
+            <div className="absolute top-[68%] -left-[3px] w-[7px] h-[7px] bg-white" />
+          </div>
+
           {/* Right Column: Hero Typography & 4 Core Pillars (6 Cols) */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="lg:col-span-6 text-left space-y-6 lg:pl-4"
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="lg:col-span-6 text-left space-y-6 lg:pl-10"
           >
             {/* Title TRΛCE in Giant Bold Modern Typography */}
             <div>
