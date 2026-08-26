@@ -31,13 +31,13 @@ export function TraceLogo3D() {
     const modelGroup = new THREE.Group();
     scene.add(modelGroup);
 
-    // --- 3. Exact Ultra-HD 3D Emblem (Front & Back for 360° Depth) ---
+    // --- 3. Single Unified 3D Shield Emblem (Zero Double-Shading / Zero Ghosting) ---
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load("/trace-shield-isolated.png", (texture) => {
       texture.generateMipmaps = true;
       texture.minFilter = THREE.LinearMipmapLinearFilter;
 
-      // Aspect ratio of trace-shield-isolated: 955w x 791h
+      // Exact aspect ratio of trace-shield-isolated: 955w x 791h
       const planeWidth = 2.45;
       const planeHeight = 2.45 * (791 / 955);
 
@@ -46,18 +46,12 @@ export function TraceLogo3D() {
         map: texture,
         transparent: true,
         side: THREE.DoubleSide,
+        depthWrite: true,
       });
 
-      // Front Face
-      const frontEmblem = new THREE.Mesh(planeGeom, planeMat);
-      frontEmblem.position.set(0, 0, 0.02);
-      modelGroup.add(frontEmblem);
-
-      // Back Face (Mirrored for seamless 360° rotation)
-      const backEmblem = new THREE.Mesh(planeGeom, planeMat);
-      backEmblem.rotation.y = Math.PI;
-      backEmblem.position.set(0, 0, -0.02);
-      modelGroup.add(backEmblem);
+      // ONE single unified 3D object
+      const emblem = new THREE.Mesh(planeGeom, planeMat);
+      modelGroup.add(emblem);
     });
 
     sceneStateRef.current = {
