@@ -15,14 +15,12 @@ import {
   Radio,
 } from "lucide-react";
 import { useSession } from "../context/SessionContext";
-import { useTrace } from "../hooks/useTrace";
 import { SpaceBackground } from "../components/landing/SpaceBackground";
 import { LandingTelemetry } from "../components/landing/LandingTelemetry";
 
 export function AuthPage() {
   const navigate = useNavigate();
   const { login } = useSession();
-  const { setDataMode, refresh } = useTrace();
   const [tab, setTab] = useState<"login" | "register">("login");
 
   // Login form state
@@ -49,8 +47,6 @@ export function AuthPage() {
     setError(null);
 
     setTimeout(() => {
-      setDataMode("live");
-      void refresh("live");
       login({
         fullName: loginEmail.split("@")[0].toUpperCase() || "COMMAND OPERATOR",
         email: loginEmail,
@@ -138,82 +134,73 @@ export function AuthPage() {
             </p>
           </div>
 
-          {/* Tab Switcher */}
+          {/* Toggle Switch */}
           <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-ink/70 border border-line mb-6">
             <button
-              onClick={() => {
-                setTab("login");
-                setError(null);
-              }}
+              onClick={() => setTab("login")}
               className={`py-2 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer ${
                 tab === "login"
-                  ? "bg-accent text-ink shadow-[0_0_15px_rgba(62,224,198,0.3)]"
+                  ? "bg-accent text-ink shadow-[0_0_12px_rgba(62,224,198,0.3)]"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              LOGIN
+              OPERATOR SIGN IN
             </button>
             <button
-              onClick={() => {
-                setTab("register");
-                setError(null);
-              }}
+              onClick={() => setTab("register")}
               className={`py-2 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer ${
                 tab === "register"
-                  ? "bg-accent text-ink shadow-[0_0_15px_rgba(62,224,198,0.3)]"
+                  ? "bg-accent text-ink shadow-[0_0_12px_rgba(62,224,198,0.3)]"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              REGISTER
+              ENROLL AGENCY
             </button>
           </div>
 
           {error && (
-            <div className="mb-4 p-2.5 rounded-lg bg-danger/15 border border-danger/40 text-xs font-mono text-danger">
+            <div className="mb-4 p-2.5 rounded-lg bg-danger/15 border border-danger/30 text-danger text-xs font-mono">
               {error}
             </div>
           )}
 
-          {/* Form Content */}
+          {/* Tabs Content */}
           <AnimatePresence mode="wait">
             {tab === "login" ? (
               <motion.form
-                key="login-form"
+                key="login"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.2 }}
                 onSubmit={handleLoginSubmit}
-                className="space-y-4 text-left"
+                className="space-y-4"
               >
                 <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1.5 uppercase">
-                    IDENTITY [ Email Address ]
-                  </label>
+                  <label className="block text-xs font-mono text-slate-300 mb-1">OPERATOR EMAIL</label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Mail className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="email"
                       value={loginEmail}
                       onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder="operator@trace.gov"
-                      className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-ink/60 border border-line focus:border-accent focus:ring-1 focus:ring-accent text-xs font-mono text-white placeholder-slate-600 outline-none transition-all"
+                      placeholder="commander@trace.isro-nasa.gov"
+                      className="w-full pl-8 pr-3 py-2.5 rounded-xl bg-ink/60 border border-line focus:border-accent text-xs font-mono text-white placeholder-slate-600 outline-none transition-colors"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1.5 uppercase">
-                    ACCESS KEY [ Security Token ]
-                  </label>
+                  <label className="block text-xs font-mono text-slate-300 mb-1">SECURITY ACCESS KEY</label>
                   <div className="relative">
-                    <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Lock className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="password"
                       value={loginPassword}
                       onChange={(e) => setLoginPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-ink/60 border border-line focus:border-accent focus:ring-1 focus:ring-accent text-xs font-mono text-white placeholder-slate-600 outline-none transition-all"
+                      className="w-full pl-8 pr-3 py-2.5 rounded-xl bg-ink/60 border border-line focus:border-accent text-xs font-mono text-white placeholder-slate-600 outline-none transition-colors"
                       required
                     />
                   </div>
@@ -222,28 +209,30 @@ export function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 rounded-xl bg-accent text-ink font-mono text-xs font-bold flex items-center justify-center gap-2 hover:bg-accent/90 shadow-[0_0_20px_rgba(62,224,198,0.3)] transition-all transform active:scale-98 cursor-pointer disabled:opacity-50"
+                  className="w-full py-2.5 mt-2 rounded-xl bg-accent text-ink font-mono text-xs font-bold flex items-center justify-center gap-2 hover:bg-accent/90 shadow-[0_0_20px_rgba(62,224,198,0.3)] transition-all transform active:scale-98 cursor-pointer disabled:opacity-50"
                 >
                   {loading ? (
                     <span>AUTHENTICATING TELEMETRY...</span>
                   ) : (
                     <>
-                      <span>AUTHENTICATE →</span>
+                      <span>ENTER LIVE OPERATIONAL COMMAND</span>
+                      <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
               </motion.form>
             ) : (
               <motion.form
-                key="register-form"
+                key="register"
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
                 onSubmit={handleRegisterSubmit}
-                className="space-y-3 text-left"
+                className="space-y-3"
               >
                 <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1">FULL NAME</label>
+                  <label className="block text-xs font-mono text-slate-300 mb-1">OFFICER FULL NAME</label>
                   <div className="relative">
                     <User className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
