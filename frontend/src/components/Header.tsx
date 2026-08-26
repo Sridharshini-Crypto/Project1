@@ -1,13 +1,12 @@
-import { Satellite, MapPin, User, LogOut, Globe, Home } from "lucide-react";
+import { Satellite, MapPin, User, LogOut, Globe, Home, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTrace } from "../hooks/useTrace";
 import { useSession } from "../context/SessionContext";
 
 export function Header() {
   const navigate = useNavigate();
-  const { dataMode, health, refresh, loading } = useTrace();
+  const { dataMode, setDataMode, refresh, loading } = useTrace();
   const { session, region, logout } = useSession();
-  const demo = dataMode === "demo" || health?.demo_mode;
 
   const handleLogout = () => {
     logout();
@@ -15,7 +14,7 @@ export function Header() {
   };
 
   return (
-    <header className="border-b border-line bg-panel/90 px-4 sm:px-5 py-3 backdrop-blur-md sticky top-0 z-30">
+    <header className="border-b border-line bg-panel/90 px-4 sm:px-5 py-2.5 backdrop-blur-md sticky top-0 z-30">
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* Left: TRACE Logo & Tagline */}
         <div className="flex items-center gap-3">
@@ -42,59 +41,65 @@ export function Header() {
           </div>
         </div>
 
-        {/* Center: Active Observation Zone Badge */}
-        <div className="flex items-center gap-2">
+        {/* Center: 2-Session Mode Toggle (Live Satellite vs Judge Demo Mode) */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center p-0.5 rounded-xl bg-ink/80 border border-line-bright shadow-inner">
+            <button
+              onClick={() => {
+                setDataMode("live");
+                refresh("live");
+              }}
+              disabled={loading}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                dataMode === "live"
+                  ? "bg-accent text-ink shadow-[0_0_12px_rgba(62,224,198,0.4)]"
+                  : "text-slate-400 hover:text-white"
+              }`}
+              title="Connect to real-time live NASA FIRMS & Sentinel satellite feeds"
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${dataMode === "live" ? "bg-ink animate-pulse" : "bg-accent"}`} />
+              <Satellite className="w-3.5 h-3.5" />
+              <span>LIVE DATA STREAM</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setDataMode("demo");
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                dataMode === "demo"
+                  ? "bg-warn text-ink shadow-[0_0_12px_rgba(244,185,66,0.4)]"
+                  : "text-slate-400 hover:text-warn"
+              }`}
+              title="Switch to Judge Instant Demo Mode with pre-loaded curated datasets"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>JUDGE DEMO MODE</span>
+            </button>
+          </div>
+
           <div
             onClick={() => navigate("/region")}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-panel-light border border-line-bright hover:border-accent text-xs font-mono cursor-pointer transition-colors shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-panel-light border border-line-bright hover:border-accent text-xs font-mono cursor-pointer transition-colors shadow-sm hidden md:flex"
             title="Click to Switch Observation Zone"
           >
             <MapPin className="w-3.5 h-3.5 text-accent" />
             <span className="text-slate-400">ZONE:</span>
-            <span className="text-white font-bold max-w-[140px] sm:max-w-[200px] truncate">
+            <span className="text-white font-bold max-w-[140px] truncate">
               {region?.name || "Chennai Sector"}
             </span>
-            <span className="text-[10px] text-accent ml-1 underline hidden sm:inline">Change</span>
           </div>
-
-          {session && (
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-ink/60 border border-line text-xs font-mono text-slate-300">
-              <User className="w-3 h-3 text-cyan-400" />
-              <span className="text-slate-400">OPERATOR:</span>
-              <span className="text-white font-semibold truncate max-w-[120px]">{session.fullName}</span>
-              <span className="text-[10px] text-slate-500">({session.role})</span>
-            </div>
-          )}
         </div>
 
-        {/* Right: Data Mode, Refresh & Actions */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span
-            className={`rounded-full border px-3 py-1 text-xs font-semibold font-mono ${
-              demo ? "border-warn text-warn bg-warn/10" : "border-accent text-accent bg-accent/10"
-            }`}
-          >
-            {demo ? "DEMO DATA" : "LIVE DATA"}
-          </span>
-          <span className="rounded-full border border-line px-3 py-1 text-xs font-mono text-slate-300 hidden md:inline">
-            DB: {health?.database ?? "connected"}
-          </span>
-          <button
-            className="rounded border border-line px-3 py-1 text-xs font-mono text-slate-200 hover:border-accent hover:text-white transition-colors cursor-pointer"
-            onClick={() => refresh("live")}
-            disabled={loading}
-          >
-            Refresh live
-          </button>
-          <button
-            className="rounded border border-warn/40 px-3 py-1 text-xs font-mono text-warn hover:border-warn hover:bg-warn/10 transition-colors cursor-pointer"
-            onClick={() => refresh("demo")}
-            disabled={loading}
-          >
-            Switch to Demo Mode
-          </button>
+        {/* Right: Operator Badge & Quick Nav Actions */}
+        <div className="flex items-center gap-2">
+          {session && (
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1 rounded-full bg-ink/60 border border-line text-xs font-mono text-slate-300">
+              <User className="w-3 h-3 text-cyan-400" />
+              <span className="text-white font-semibold truncate max-w-[120px]">{session.fullName}</span>
+            </div>
+          )}
 
-          {/* Quick Nav Icons */}
           <button
             onClick={() => navigate("/region")}
             className="p-1.5 rounded border border-line hover:border-accent text-slate-400 hover:text-accent transition-colors cursor-pointer"
@@ -102,22 +107,22 @@ export function Header() {
           >
             <Globe className="h-4 w-4" />
           </button>
+
           <button
             onClick={() => navigate("/")}
             className="p-1.5 rounded border border-line hover:border-accent text-slate-400 hover:text-accent transition-colors cursor-pointer"
-            title="Mission Briefing & Architecture"
+            title="Return to TRACE Hero & Observatory"
           >
             <Home className="h-4 w-4" />
           </button>
+
           <button
             onClick={handleLogout}
             className="p-1.5 rounded border border-line hover:border-danger text-slate-400 hover:text-danger transition-colors cursor-pointer"
-            title="Logout / Change Operator"
+            title="Sign out"
           >
             <LogOut className="h-4 w-4" />
           </button>
-
-          <Satellite className="h-4 w-4 text-slate-500 hidden sm:block" />
         </div>
       </div>
     </header>

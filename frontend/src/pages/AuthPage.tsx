@@ -15,12 +15,14 @@ import {
   Radio,
 } from "lucide-react";
 import { useSession } from "../context/SessionContext";
+import { useTrace } from "../hooks/useTrace";
 import { SpaceBackground } from "../components/landing/SpaceBackground";
 import { LandingTelemetry } from "../components/landing/LandingTelemetry";
 
 export function AuthPage() {
   const navigate = useNavigate();
   const { login } = useSession();
+  const { setDataMode, refresh } = useTrace();
   const [tab, setTab] = useState<"login" | "register">("login");
 
   // Login form state
@@ -47,6 +49,8 @@ export function AuthPage() {
     setError(null);
 
     setTimeout(() => {
+      setDataMode("live");
+      void refresh("live");
       login({
         fullName: loginEmail.split("@")[0].toUpperCase() || "COMMAND OPERATOR",
         email: loginEmail,
@@ -55,7 +59,7 @@ export function AuthPage() {
       });
       setLoading(false);
       navigate("/region");
-    }, 500);
+    }, 400);
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
@@ -68,6 +72,8 @@ export function AuthPage() {
     setError(null);
 
     setTimeout(() => {
+      setDataMode("live");
+      void refresh("live");
       login({
         fullName: regName,
         email: regEmail,
@@ -76,17 +82,18 @@ export function AuthPage() {
       });
       setLoading(false);
       navigate("/region");
-    }, 500);
+    }, 400);
   };
 
   const handleQuickDemoAccess = () => {
+    setDataMode("demo");
     login({
-      fullName: "Mission Commander (Demo)",
-      email: "commander@trace.demo",
-      organization: "National Disaster Response Force (NDRF)",
-      role: "Lead Geospatial Analyst",
+      fullName: "Judge / Evaluator (Demo)",
+      email: "judge@trace.eval",
+      organization: "Smart India Hackathon Jury",
+      role: "Lead Evaluation Panel",
     });
-    navigate("/region");
+    navigate("/app");
   };
 
   return (

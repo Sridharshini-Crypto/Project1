@@ -8,3 +8,4 @@ latitude,longitude,bright_ti4,scan,track,acq_date,acq_time,satellite,instrument,
 11.5790,76.5210,336.8,0.42,0.40,2026-08-23,1352,N,VIIRS,nominal,2.0NRT,294.1,31.6,D
 11.6210,76.5680,332.5,0.43,0.41,2026-08-23,0150,N,VIIRS,low,2.0NRT,290.2,18.9,N
 11.5720,76.5140,328.4,0.44,0.42,2026-08-22,1358,N,VIIRS,low,2.0NRT,286.7,11.2,D
+

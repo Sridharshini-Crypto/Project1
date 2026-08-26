@@ -15,7 +15,7 @@ function axiosMessage(err: unknown, fallback: string) {
 export function TraceProvider({ children }: { children: React.ReactNode }) {
   const [health, setHealth] = useState<TraceState["health"]>(null);
   const [events, setEvents] = useState<ThermalEvent[]>([]);
-  const [dataMode, setDataMode] = useState<TraceState["dataMode"]>("unknown");
+  const [dataMode, setDataMode] = useState<TraceState["dataMode"]>("live");
   const [selected, setSelected] = useState<ThermalEvent | null>(null);
   const [intelligence, setIntelligence] = useState<Intelligence | null>(null);
   const [dashboard, setDashboard] = useState<DashboardSummary | null>(null);
@@ -26,21 +26,22 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
   const refresh = useCallback(async (mode?: "demo" | "live") => {
     setLoading(true);
     setError(null);
+    const targetMode = mode || dataMode;
     try {
       const healthRes = await getHealth();
       setHealth(healthRes);
       const hotspots = await fetchHotspots(
-        mode === "demo" ? { demo: true } : mode === "live" ? { demo: false } : {}
+        targetMode === "demo" ? { demo: true } : targetMode === "live" ? { demo: false } : {}
       );
       setEvents(hotspots.events);
-      setDataMode(hotspots.mode);
+      setDataMode(hotspots.mode === "demo" ? "demo" : "live");
       setDashboard(await getDashboard());
     } catch (err) {
       setError(axiosMessage(err, "Failed to load TRACE data"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [dataMode]);
 
   const selectEvent = useCallback(async (event: ThermalEvent) => {
     setSelected(event);
@@ -104,8 +105,8 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    void refresh("live");
+  }, []);
 
   const value = useMemo<TraceState>(
     () => ({
@@ -120,6 +121,7 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
       error,
       selectEvent,
       loadScenario,
+      setDataMode,
       refresh,
       setImpactRadius,
     }),
@@ -135,6 +137,7 @@ export function TraceProvider({ children }: { children: React.ReactNode }) {
       error,
       selectEvent,
       loadScenario,
+      setDataMode,
       refresh,
       setImpactRadius,
     ]
